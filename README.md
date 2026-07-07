@@ -91,7 +91,7 @@ python -m app.evals compare --mode hybrid     # fixed vs recursive vs semantic
 
 ## Evaluation results
 
-Full analysis in [`evaluation_results/REPORT.md`](evaluation_results/REPORT.md).
+The full evaluation report lives in [`evaluation_results/REPORT.md`](evaluation_results/REPORT.md).
 
 The eval harness (`python -m scripts.run_full_eval`) ran the full ablation
 matrix, three chunking strategies and three retrieval modes, over a privately
@@ -127,16 +127,35 @@ questions is planned.
 | dense | 0.752 | 0.993 | 0.793 | 0.684 |
 | sparse | 0.848 | 0.955 | 0.914 | 0.569 |
 
-On the 7 unanswerable trap questions, hybrid abstained 7/7 (fixed 7/7,
-semantic 6/7); dense and sparse answered every one, since the refusal gate
-needs the reranker's scores and is inert in those modes.
+### Abstention on the 7 unanswerable trap questions
 
-Hybrid retrieval was the only configuration that handled the whole task:
-sparse BM25 matched it on keyword lookups but fell behind on multi-hop
-retrieval, dense-only missed exact-keyword questions, and only hybrid could
-abstain. Weak spots, measured and reported rather than hidden: citation
-attribution is the weakest metric (0.67 on answered questions, a conservative
-lower bound), ambiguous questions get answered under one interpretation, and
-the refusal gate fails open when the reranker errors. Numbers are only
-meaningful at this corpus scale and have not yet been reproduced without the
-response cache; see the report for the full honest decomposition.
+| config | abstained | note |
+|---|---|---|
+| hybrid (recursive) | **7/7** | refusal gate uses the reranker's relevance scores |
+| hybrid (fixed) | **7/7** | |
+| hybrid (semantic) | 6/7 | the one miss coincided with a reranker failure |
+| dense | 0/7 | no reranker, so the gate is inert in this mode |
+| sparse | 0/7 | same |
+
+### Key takeaways
+
+| question | answer |
+|---|---|
+| Best configuration | Hybrid retrieval + recursive chunking (0.92 correctness, 1.00 retrieval hit) |
+| Keyword lookups | Sparse BM25 matches hybrid (1.00); dense-only misses exact keywords (0.79) |
+| Multi-hop questions | Only hybrid retrieves reliably (1.00 hit vs 0.70-0.75 for single indexes) |
+| Unanswerable questions | Only hybrid abstains (7/7); dense/sparse answer every trap |
+| Chunking decision | Recursive wins; semantic, the most complex strategy, underperforms |
+
+### Known weak spots (measured, not hidden)
+
+| weak spot | measurement |
+|---|---|
+| Citation attribution | 0.67 on answered questions (conservative lower bound) |
+| Ambiguous questions | 0.56 correctness; answers one interpretation instead of clarifying |
+| Reranker JSON failures | ~3.7% of calls; the refusal gate fails open when this happens |
+| Reproducibility | not yet re-run without the response cache |
+| Scale | 24 docs / 210 chunks; numbers do not claim production scale |
+
+See [`evaluation_results/REPORT.md`](evaluation_results/REPORT.md) for the
+full decomposition behind these tables.
