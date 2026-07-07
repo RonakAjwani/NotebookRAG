@@ -91,22 +91,52 @@ python -m app.evals compare --mode hybrid     # fixed vs recursive vs semantic
 
 ## Evaluation results
 
-The eval harness (`python -m scripts.run_full_eval`) ran the full ablation
-matrix, three chunking strategies and three retrieval modes, over a
-24-doc / 210-chunk corpus with a 36-question hand-authored golden set
-(lookup / multi-hop / no-answer / ambiguous categories). The corpus is
-private internal notes, so it and the raw eval artifacts are not included in
-this repo; a follow-up run on a public corpus with externally written
-questions is planned, and those artifacts will be published.
+Full analysis in [`evaluation_results/REPORT.md`](evaluation_results/REPORT.md).
 
-Headline numbers (hybrid mode, recursive chunking): correctness 0.92,
-faithfulness 0.99, retrieval hit 1.00, citation accuracy 0.67 on answered
-questions (a conservative lower bound). Hybrid retrieval was the only
-configuration that handled the whole task: sparse BM25 matched it on keyword
-lookups but fell behind on multi-hop retrieval, dense-only missed
-exact-keyword questions, and neither ablation mode could abstain on
-unanswerable questions (hybrid abstained 7/7). Weak spots, measured and
-reported rather than hidden: citation attribution is the weakest metric,
-ambiguous questions get answered under one interpretation, and the refusal
-gate fails open when the reranker errors. Numbers are only meaningful at this
-corpus scale and have not yet been reproduced without the response cache.
+The eval harness (`python -m scripts.run_full_eval`) ran the full ablation
+matrix, three chunking strategies and three retrieval modes, over a privately
+curated 24-doc / 210-chunk corpus with a 36-question hand-authored golden set
+(lookup / multi-hop / no-answer / ambiguous categories). The corpus, golden
+set, and raw per-case artifacts stay private; the report above is the
+published record. A follow-up run on a public corpus with externally written
+questions is planned.
+
+### Retrieval-mode comparison (recursive chunking, 36 questions)
+
+| mode | correctness | faithfulness | retrieval_hit | citation_acc | answered_rate | errored |
+|---|---|---|---|---|---|---|
+| **hybrid** | **0.919** | 0.992 | **1.000** | **0.736** | 0.806 | 1/36 |
+| dense | 0.606 | 0.994 | 0.639 | 0.551 | 1.000 | 0/36 |
+| sparse | 0.683 | 0.964 | 0.736 | 0.458 | 1.000 | 0/36 |
+
+### Chunking-strategy comparison (hybrid mode, 36 questions)
+
+| strategy | correctness | faithfulness | retrieval_hit | citation_acc | errored |
+|---|---|---|---|---|---|
+| **recursive** | 0.919 | 0.992 | **1.000** | 0.736 | 1/36 |
+| fixed | **0.936** | 0.961 | 0.944 | 0.667 | 1/36 |
+| semantic | 0.814 | **0.994** | 0.917 | **0.792** | 2/36 |
+
+### Answerable questions only (29 items; unanswerable traps scored separately)
+
+| config | correctness | faithfulness | retrieval_hit | citation_acc |
+|---|---|---|---|---|
+| hybrid (recursive) | 0.900 | 0.990 | **1.000** | 0.672 |
+| hybrid (fixed) | 0.921 | 0.952 | 0.931 | 0.586 |
+| hybrid (semantic) | 0.803 | 0.993 | 0.931 | 0.776 |
+| dense | 0.752 | 0.993 | 0.793 | 0.684 |
+| sparse | 0.848 | 0.955 | 0.914 | 0.569 |
+
+On the 7 unanswerable trap questions, hybrid abstained 7/7 (fixed 7/7,
+semantic 6/7); dense and sparse answered every one, since the refusal gate
+needs the reranker's scores and is inert in those modes.
+
+Hybrid retrieval was the only configuration that handled the whole task:
+sparse BM25 matched it on keyword lookups but fell behind on multi-hop
+retrieval, dense-only missed exact-keyword questions, and only hybrid could
+abstain. Weak spots, measured and reported rather than hidden: citation
+attribution is the weakest metric (0.67 on answered questions, a conservative
+lower bound), ambiguous questions get answered under one interpretation, and
+the refusal gate fails open when the reranker errors. Numbers are only
+meaningful at this corpus scale and have not yet been reproduced without the
+response cache; see the report for the full honest decomposition.
