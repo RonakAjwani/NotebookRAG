@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 680" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1100" height="680" fill="#ffffff"/>
+  <text x="550" y="40" text-anchor="middle" font-size="18" font-weight="600" fill="#0f172a">Hybrid Search RAG - System Architecture</text>
+
+  <!-- ================= INGESTION PIPELINE ================= -->
+  <rect x="290" y="70" width="540" height="130" rx="10" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="302" y="92" font-size="11" font-weight="600" fill="#64748b" letter-spacing="0.5">INGESTION&#160;&#160;POST /v1/ingest</text>
+
+  <rect x="302" y="110" width="92" height="64" rx="8" fill="#ffffff" stroke="#94a3b8"/>
+  <text x="348" y="134" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">Load</text>
+  <text x="348" y="150" text-anchor="middle" font-size="9.5" fill="#64748b">md / txt</text>
+  <text x="348" y="162" text-anchor="middle" font-size="9.5" fill="#64748b">html / pdf</text>
+
+  <rect x="408" y="110" width="92" height="64" rx="8" fill="#ffffff" stroke="#94a3b8"/>
+  <text x="454" y="134" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">Chunk</text>
+  <text x="454" y="150" text-anchor="middle" font-size="9.5" fill="#64748b">fixed / recursive</text>
+  <text x="454" y="162" text-anchor="middle" font-size="9.5" fill="#64748b">/ semantic</text>
+
+  <rect x="514" y="110" width="92" height="64" rx="8" fill="#ffffff" stroke="#94a3b8"/>
+  <text x="560" y="134" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">Embed</text>
+  <text x="560" y="150" text-anchor="middle" font-size="9.5" fill="#64748b">fastembed, local</text>
+  <text x="560" y="162" text-anchor="middle" font-size="9.5" fill="#64748b">dense + BM25</text>
+
+  <rect x="620" y="110" width="92" height="64" rx="8" fill="#ffffff" stroke="#94a3b8"/>
+  <text x="666" y="134" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">Dedup</text>
+  <text x="666" y="150" text-anchor="middle" font-size="9.5" fill="#64748b">sha256 +</text>
+  <text x="666" y="162" text-anchor="middle" font-size="9.5" fill="#64748b">cosine 0.95</text>
+
+  <rect x="726" y="110" width="92" height="64" rx="8" fill="#ffffff" stroke="#94a3b8"/>
+  <text x="772" y="134" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">Index</text>
+  <text x="772" y="150" text-anchor="middle" font-size="9.5" fill="#64748b">one upsert,</text>
+  <text x="772" y="162" text-anchor="middle" font-size="9.5" fill="#64748b">both vectors</text>
+
+  <line x1="394" y1="142" x2="406" y2="142" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="500" y1="142" x2="512" y2="142" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="606" y1="142" x2="618" y2="142" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="712" y1="142" x2="724" y2="142" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ================= QDRANT ================= -->
+  <rect x="460" y="240" width="200" height="70" rx="8" fill="#ecfdf5" stroke="#34d399"/>
+  <text x="560" y="264" text-anchor="middle" font-size="13" font-weight="600" fill="#065f46">Qdrant</text>
+  <text x="560" y="281" text-anchor="middle" font-size="9.5" fill="#047857">one collection, named</text>
+  <text x="560" y="293" text-anchor="middle" font-size="9.5" fill="#047857">dense + sparse vectors</text>
+
+  <!-- Index -> Qdrant -->
+  <path d="M772,174 L772,275 L664,275" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="722" y="268" text-anchor="middle" font-size="9.5" fill="#64748b">write</text>
+
+  <!-- Qdrant -> Hybrid Search -->
+  <path d="M560,310 L560,328 L385,328 L385,377" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="475" y="322" text-anchor="middle" font-size="9.5" fill="#64748b">read</text>
+
+  <!-- ================= QUERY PIPELINE ================= -->
+  <rect x="290" y="340" width="540" height="230" rx="10" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="818" y="362" text-anchor="end" font-size="11" font-weight="600" fill="#64748b" letter-spacing="0.5">QUERY&#160;&#160;POST /v1/ask</text>
+
+  <rect x="310" y="380" width="150" height="64" rx="8" fill="#ffffff" stroke="#94a3b8"/>
+  <text x="385" y="404" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">Hybrid Search</text>
+  <text x="385" y="420" text-anchor="middle" font-size="9.5" fill="#64748b">dense top 10 +</text>
+  <text x="385" y="432" text-anchor="middle" font-size="9.5" fill="#64748b">sparse top 10</text>
+
+  <rect x="484" y="380" width="150" height="64" rx="8" fill="#ffffff" stroke="#94a3b8"/>
+  <text x="559" y="404" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">RRF Fusion</text>
+  <text x="559" y="420" text-anchor="middle" font-size="9.5" fill="#64748b">weighted, client-side</text>
+  <text x="559" y="432" text-anchor="middle" font-size="9.5" fill="#64748b">0.7 dense / 0.3 sparse</text>
+
+  <rect x="658" y="380" width="150" height="64" rx="8" fill="#ffffff" stroke="#94a3b8"/>
+  <text x="733" y="404" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">LLM Rerank</text>
+  <text x="733" y="420" text-anchor="middle" font-size="9.5" fill="#64748b">listwise, temp 0</text>
+  <text x="733" y="432" text-anchor="middle" font-size="9.5" fill="#64748b">keeps top 5</text>
+
+  <line x1="460" y1="412" x2="482" y2="412" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="634" y1="412" x2="656" y2="412" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Rerank -> Refusal Gate (row wrap) -->
+  <line x1="733" y1="444" x2="733" y2="477" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <rect x="700" y="480" width="108" height="64" rx="8" fill="#ffffff" stroke="#94a3b8"/>
+  <text x="754" y="504" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">Refusal Gate</text>
+  <text x="754" y="520" text-anchor="middle" font-size="9.5" fill="#64748b">abstains below</text>
+  <text x="754" y="532" text-anchor="middle" font-size="9.5" fill="#64748b">0.35 confidence</text>
+
+  <rect x="572" y="480" width="108" height="64" rx="8" fill="#ffffff" stroke="#94a3b8"/>
+  <text x="626" y="504" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">Generate</text>
+  <text x="626" y="520" text-anchor="middle" font-size="9.5" fill="#64748b">grounded answer</text>
+  <text x="626" y="532" text-anchor="middle" font-size="9.5" fill="#64748b">with [n] citations</text>
+
+  <rect x="444" y="480" width="108" height="64" rx="8" fill="#ffffff" stroke="#94a3b8"/>
+  <text x="498" y="504" text-anchor="middle" font-size="11.5" font-weight="600" fill="#0f172a">Verify Citations</text>
+  <text x="498" y="520" text-anchor="middle" font-size="9.5" fill="#64748b">claim-level,</text>
+  <text x="498" y="532" text-anchor="middle" font-size="9.5" fill="#64748b">judge LLM</text>
+
+  <rect x="316" y="480" width="108" height="64" rx="8" fill="#ffffff" stroke="#94a3b8"/>
+  <text x="370" y="504" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">Confidence</text>
+  <text x="370" y="520" text-anchor="middle" font-size="9.5" fill="#64748b">retrieval + coverage</text>
+  <text x="370" y="532" text-anchor="middle" font-size="9.5" fill="#64748b">+ completeness</text>
+
+  <line x1="700" y1="512" x2="682" y2="512" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="572" y1="512" x2="554" y2="512" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="444" y1="512" x2="426" y2="512" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ================= CLIENT ================= -->
+  <rect x="40" y="320" width="170" height="200" rx="10" fill="#eef2ff" stroke="#818cf8"/>
+  <text x="125" y="406" text-anchor="middle" font-size="12.5" font-weight="600" fill="#3730a3">React Dashboard</text>
+  <text x="125" y="424" text-anchor="middle" font-size="9.5" fill="#4f46e5">Vite + shadcn/ui</text>
+  <text x="125" y="438" text-anchor="middle" font-size="9.5" fill="#4f46e5">hybrid vs dense compare</text>
+  <text x="125" y="452" text-anchor="middle" font-size="9.5" fill="#4f46e5">:8080</text>
+
+  <!-- Client -> Ingestion -->
+  <path d="M125,320 L125,142 L299,142" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="133" y="230" font-size="9.5" fill="#64748b">upload docs</text>
+
+  <!-- Client -> Query -->
+  <line x1="210" y1="412" x2="307" y2="412" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="259" y="404" text-anchor="middle" font-size="9.5" fill="#64748b">ask question</text>
+
+  <!-- Confidence -> Client (answer) -->
+  <line x1="316" y1="512" x2="213" y2="512" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="263" y="504" text-anchor="middle" font-size="9.5" fill="#64748b">answer</text>
+
+  <!-- ================= LLM ================= -->
+  <rect x="880" y="380" width="180" height="110" rx="8" fill="#fff7ed" stroke="#fb923c"/>
+  <text x="970" y="408" text-anchor="middle" font-size="12.5" font-weight="600" fill="#9a3412">LLM Client</text>
+  <text x="970" y="428" text-anchor="middle" font-size="9.5" fill="#b45309">retry + backoff</text>
+  <text x="970" y="442" text-anchor="middle" font-size="9.5" fill="#b45309">prompt-hash cache</text>
+  <text x="970" y="456" text-anchor="middle" font-size="9.5" fill="#b45309">per-model pacing</text>
+
+  <rect x="880" y="530" width="180" height="64" rx="8" fill="#fff7ed" stroke="#fb923c"/>
+  <text x="970" y="554" text-anchor="middle" font-size="12" font-weight="600" fill="#9a3412">Cerebras / Groq</text>
+  <text x="970" y="572" text-anchor="middle" font-size="9.5" fill="#b45309">OpenAI-compatible APIs</text>
+
+  <line x1="970" y1="490" x2="970" y2="527" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Query pipeline -> LLM client -->
+  <line x1="830" y1="435" x2="877" y2="435" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="854" y="427" text-anchor="middle" font-size="9.5" fill="#64748b">LLM calls</text>
+
+  <!-- ================= FOOTNOTE ================= -->
+  <text x="550" y="634" text-anchor="middle" font-size="10.5" fill="#64748b">Rerank, generation, and citation verification go through the LLM client; verification and eval judges run on a different model family than the generator to avoid self-preference bias.</text>
+</svg>

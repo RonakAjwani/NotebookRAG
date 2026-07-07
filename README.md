@@ -24,20 +24,9 @@ plus a confidence score and a graceful "I don't know" when the evidence is thin.
 
 ## Architecture
 
-```
-        ┌──────────────┐      ┌───────────────────────── backend (FastAPI) ─────────────────────────┐
-        │  React        │      │                                                                     │
-        │  dashboard    │─────▶│  /v1/ask ─▶ retrieve ─▶ RRF ─▶ LLM rerank ─▶ generate ─▶ verify ─▶ score │
-        │  (Vite/shadcn)│      │  /v1/ingest ─▶ load ─▶ chunk ─▶ embed ─▶ dedup ─▶ index               │
-        └──────────────┘      │        │ dense+sparse                    │ LLM (Cerebras/Groq)         │
-                              │        ▼                                 ▼                            │
-                              │     Qdrant (dense + sparse vectors)   fastembed (local embeddings)   │
-                              └─────────────────────────────────────────────────────────────────────┘
-```
+![System architecture](architecture.svg)
 
-Backend module map lives in [`backend/README.md`](backend/README.md). The
-detailed design rationale is in the Obsidian vault under `notebookRAG/`
-(`Implementation Plan`, `Backend Architecture`).
+The backend module map lives in [`backend/README.md`](backend/README.md).
 
 ## Tech stack
 
