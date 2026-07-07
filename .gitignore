@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+venv/
+ENV/
+env/
+
+# Environment variables
+.env
+
+# Node
+node_modules/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build output
+frontend/dist/
+frontend/build/
+
+# Runtime data
+qdrant_storage/
+*.log
+logs/
+
+# Test coverage
+htmlcov/
+.coverage
+.pytest_cache/
+coverage/
+
+# Private notes (Obsidian vault + Claude Code project instructions)
+notebookRAG/
+CLAUDE.md
+
+# Private eval corpus and everything derived from it (questions/answers/reports
+# quote the corpus). A public-corpus eval is planned; publish those artifacts
+# from a separate directory when they exist.
+document corpus/
+backend/data/golden.json
+results/

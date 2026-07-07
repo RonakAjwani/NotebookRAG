@@ -1,0 +1,31 @@
+# --- API ---
+fastapi
+uvicorn[standard]
+python-multipart
+pydantic
+pydantic-settings
+python-dotenv
+
+# --- LLM inference (OpenAI-compatible: Cerebras / Groq / OpenAI) ---
+openai
+
+# --- Vector store ---
+qdrant-client
+
+# --- Embeddings: dense + sparse (BM25), local, no API key ---
+fastembed
+
+# --- Chunking ---
+langchain-text-splitters
+
+# --- Document loading ---
+pypdf
+python-docx
+beautifulsoup4
+lxml
+markdown-it-py
+
+# --- Utils ---
+numpy
+httpx
+tqdm
