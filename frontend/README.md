@@ -1,124 +1,35 @@
-# NotebookRAG - Multimodal Document Intelligence
+# Frontend - Hybrid RAG Dashboard
 
-A powerful multimodal Graph RAG system for document analysis and intelligent querying, inspired by Google's NotebookLM.
+Single-page dashboard for the Hybrid RAG API: ask a question, get a grounded
+answer with clickable verified citations, a confidence breakdown, and the
+ranked retrieved chunks behind it. Includes a hybrid-vs-dense side-by-side
+compare mode and an ingest panel for uploading and managing documents.
 
-## Features
+Built with React 18, TypeScript, Vite, shadcn/ui, and Tailwind CSS.
 
-- **Multi-document Upload**: Upload multiple PDFs, DOCX, TXT, and other document formats
-- **Graph-based RAG**: Utilizes Graph RAG for enhanced document understanding and relationship mapping
-- **Vector Search**: FAISS-powered vector storage for semantic search
-- **Agentic Workflow**: LangGraph-based intelligent agents for complex query handling
-- **Modern UI**: Built with React, TypeScript, and shadcn/ui components
-
-## Tech Stack
-
-### Frontend
-- **Framework**: React 18 with TypeScript
-- **Build Tool**: Vite
-- **UI Components**: shadcn/ui (Radix UI primitives)
-- **Styling**: Tailwind CSS
-- **Routing**: React Router v6
-- **State Management**: TanStack Query
-- **Theme**: next-themes for dark/light mode support
-
-### Backend
-- **Framework**: FastAPI & Uvicorn
-- **Graph Storage**: NetworkX
-- **Vector Storage**: FAISS
-- **LLM API**: Cerebras
-- **Workflow**: LangGraph for agentic workflows
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js v22.20.0
-- npm 11.6.2
-- Python 3.14.0
-
-### Frontend Setup
+## Setup
 
 ```bash
-# Navigate to frontend directory
-cd frontend
-
-# Install dependencies
 npm install
-
-# Start development server
-npm run dev
+npm run dev        # http://localhost:8080
 ```
 
-The frontend will be available at `http://localhost:8080`
+The backend API URL comes from `VITE_API_URL` (see `.env.example`, defaults to
+`http://localhost:8000`). Start the backend first; see the repo root README.
 
-### Backend Setup
+## Scripts
 
-```bash
-# Navigate to backend directory
-cd backend
+- `npm run dev` - development server
+- `npm run build` - production build (tsc is not part of the build; run
+  `npx tsc --noEmit` to typecheck)
+- `npm run lint` - ESLint
 
-# Create virtual environment
-python -m venv venv
+## Structure
 
-# Activate virtual environment (Windows PowerShell)
-.\venv\Scripts\Activate.ps1
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Start the backend server
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
-```
-
-The backend API will be available at `http://localhost:8000`
-
-## Project Structure
-
-```
-NLP-Project/
-├── frontend/           # React frontend application
-│   ├── src/
-│   │   ├── components/ # Reusable UI components
-│   │   ├── pages/      # Page components
-│   │   ├── lib/        # Utility functions
-│   │   └── hooks/      # Custom React hooks
-│   └── public/         # Static assets
-├── backend/            # FastAPI backend application
-│   ├── venv/          # Virtual environment (not tracked)
-│   ├── api/           # API routes
-│   ├── services/      # Business logic
-│   ├── models/        # Data models
-│   ├── storage/       # Graph & Vector storage
-│   └── agents/        # LangGraph agents
-└── README.md
-```
-
-## Development
-
-### Available Scripts (Frontend)
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
-
-### API Documentation
-
-Once the backend is running, visit `http://localhost:8000/docs` for interactive API documentation (Swagger UI).
-
-## Environment Variables
-
-Create a `.env` file in the backend directory:
-
-```env
-CEREBRAS_API_KEY=your_api_key_here
-ENVIRONMENT=development
-```
-
-## Contributing
-
-This is an MVP project. Contributions and suggestions are welcome!
-
-## License
-
-MIT License
+- `src/pages/Dashboard.tsx` - the app: query input, mode toggle, results
+- `src/components/AnswerView.tsx` - answer with `[n]` citations and verified badges
+- `src/components/ConfidenceBreakdown.tsx` - retrieval / coverage / completeness
+- `src/components/RetrievedChunkList.tsx` - ranked chunks with scores
+- `src/components/IngestPanel.tsx` - upload and document management
+- `src/lib/api.ts` - `/v1` API client; `src/lib/types.ts` mirrors the backend
+  response schemas

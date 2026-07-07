@@ -110,7 +110,3 @@ reported rather than hidden: citation attribution is the weakest metric,
 ambiguous questions get answered under one interpretation, and the refusal
 gate fails open when the reranker errors. Numbers are only meaningful at this
 corpus scale and have not yet been reproduced without the response cache.
-
-## License
-
-MIT
